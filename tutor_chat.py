@@ -54,40 +54,30 @@ class TutorChat:
         """Evaluate answer via Gemini — always fresh."""
         context = self.db.get_context(query=f"{topic} {question}", top_k=2)
 
-        prompt = f"""You are an expert real estate tutor evaluating a student's quiz answer.
+        prompt = f"""You are a real estate tutor evaluating a student's answer.
 
-KNOWLEDGE BASE CONTEXT:
-{context}
+CONTEXT: {context}
 
-QUESTION:
-{question}
+QUESTION: {question}
+STUDENT ANSWER: {user_answer}
+CORRECT ANSWER: {correct_answer}
+KEY POINTS: {", ".join(key_points)}
 
-STUDENT'S ANSWER:
-{user_answer}
+SCORING: 80+ = correct, 40-79 = partial, 0-39 = incorrect
+Award partial credit for paraphrased or near-correct answers.
 
-CORRECT ANSWER:
-{correct_answer}
+STRICT LENGTH RULES:
+- "short_feedback": max 15 words
+- "explanation": max 40 words
+- "pro_tip": max 20 words
 
-KEY CONCEPTS TO CHECK:
-{chr(10).join(f"- {kp}" for kp in key_points)}
-
-EVALUATION INSTRUCTIONS:
-1. Score fairly — award partial credit for partially correct answers
-2. Accept paraphrased answers that demonstrate understanding
-3. A score of 80+ = correct, 40-79 = partial, 0-39 = incorrect
-4. Explanation must teach, not just repeat the correct answer
-5. Pro tip must be a real-world insider insight an experienced agent would know
-
-CRITICAL: Your response must be a single valid JSON object only.
-No explanation, no markdown, no code fences, no text before or after.
-
-Output this exact structure:
+CRITICAL: Return ONLY this JSON, nothing else:
 {{
   "score": <integer 0-100>,
   "verdict": "correct" or "partial" or "incorrect",
-  "short_feedback": "one concise sentence summarizing performance",
-  "explanation": "2-3 sentences explaining the concept with real-world context",
-  "pro_tip": "one insider tip an experienced real estate professional would add"
+  "short_feedback": "brief feedback here",
+  "explanation": "concise explanation here",
+  "pro_tip": "short insider tip here"
 }}"""
 
         response = self.client.models.generate_content(
@@ -95,7 +85,7 @@ Output this exact structure:
             contents=prompt,
             config=types.GenerateContentConfig(
                 temperature=0.3,
-                max_output_tokens=1024,
+                max_output_tokens=4096,
             )
         )
 
@@ -106,17 +96,11 @@ Output this exact structure:
     def get_followup_explanation(self, topic: str, concept: str) -> str:
         context = self.db.get_context(query=concept, top_k=2)
         prompt = f"""You are a friendly real estate tutor.
-
-CONTEXT FROM KNOWLEDGE BASE:
-{context}
-
-A student is struggling to understand: "{concept}" (topic: {topic})
-
-Give a clear, friendly explanation in 3-4 sentences using a simple analogy or real-world example.
-Do NOT use jargon without explaining it. Write in plain English."""
+CONTEXT: {context}
+Explain "{concept}" (topic: {topic}) in 3-4 simple sentences with a real-world analogy."""
 
         response = self.client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=prompt,
         )
         return response.text.strip()
