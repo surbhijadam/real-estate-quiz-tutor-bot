@@ -1,0 +1,214 @@
+==================================================
+REAL ESTATE PROPERTY LISTINGS — KNOWLEDGE BASE
+==================================================
+
+----------------------------
+1. MLS (MULTIPLE LISTING SERVICE)
+----------------------------
+The Multiple Listing Service (MLS) is a private database established by cooperating real estate brokers to provide data about properties for sale. MLS allows brokers to see one another's listings of properties for sale with the goal of connecting homebuyers to sellers.
+
+Key MLS fields in a property listing:
+- MLS Number: Unique identifier for each listed property
+- List Price: The asking price set by the seller
+- DOM (Days on Market): Number of days the property has been listed
+- Status: Active, Pending, Sold, Expired, Withdrawn
+- Property Type: Single Family, Condo, Multi-Family, Land, Commercial
+- Square Footage: Total livable area in square feet
+- Lot Size: Total land area in acres or square feet
+- Year Built: The year the property was originally constructed
+- Bedrooms/Bathrooms: Count of sleeping rooms and full/half baths
+- Garage: Number of garage spaces
+- HOA Fees: Monthly or annual fees paid to Homeowners Association
+
+MLS data is only accessible to licensed real estate agents and brokers. Platforms like Zillow and Realtor.com pull syndicated MLS data.
+
+----------------------------
+2. PROPERTY VALUATION
+----------------------------
+Property valuation is the process of determining the current worth of a property. There are three primary approaches:
+
+A. Sales Comparison Approach (CMA):
+Most common for residential properties. Compares the subject property to recently sold comparable properties (comps). Adjustments are made for differences in size, condition, location, and features.
+
+B. Income Approach:
+Used for investment/rental properties. Value = Net Operating Income (NOI) / Capitalization Rate.
+- NOI = Gross Rental Income - Operating Expenses
+- Cap Rate = NOI / Property Value × 100
+
+C. Cost Approach:
+Estimates value by calculating the cost to replace the structure minus depreciation, plus land value. Used for new constructions and special-use properties.
+
+Appraisal vs. Assessment:
+- Appraisal: Performed by a licensed appraiser, used for mortgage underwriting
+- Assessment: Performed by local government, used for property tax calculation
+
+----------------------------
+3. LISTING AGREEMENTS
+----------------------------
+A listing agreement is a contract between a property owner and a real estate broker authorizing the broker to represent the seller.
+
+Types of Listing Agreements:
+A. Exclusive Right to Sell:
+Most common type. The listing broker earns a commission regardless of who sells the property, even if the seller finds the buyer themselves.
+
+B. Exclusive Agency:
+The broker earns commission only if they or another broker sells the property. If the seller sells it themselves (FSBO), no commission is owed.
+
+C. Open Listing:
+Non-exclusive. The seller can list with multiple brokers. Only the broker who brings the buyer earns the commission. The seller can also sell themselves without owing commission.
+
+D. Net Listing:
+The seller sets a minimum net price; anything above that goes to the broker. Considered unethical or illegal in many states due to conflict of interest.
+
+Key terms in listing agreements:
+- Listing Period: Duration the agreement is active (typically 3–6 months)
+- Commission Rate: Percentage of sale price paid to broker (typically 5–6%)
+- MLS Authorization: Seller's permission to list on MLS
+- Lockbox Authorization: Permission to install a lockbox for showings
+
+----------------------------
+4. CAPITALIZATION RATE (CAP RATE)
+----------------------------
+Cap Rate is used to evaluate the profitability of a real estate investment.
+
+Formula: Cap Rate = NOI / Current Market Value × 100
+
+Example:
+- Property Value: $500,000
+- Annual Gross Rent: $60,000
+- Operating Expenses: $20,000
+- NOI = $60,000 - $20,000 = $40,000
+- Cap Rate = $40,000 / $500,000 = 8%
+
+Interpretation:
+- Higher cap rate = higher return but higher risk
+- Lower cap rate = lower return but lower risk (typically stabilized/prime areas)
+- Market cap rates vary by property type and location
+- Typical residential cap rates: 4–10%
+- Typical commercial cap rates: 5–12%
+
+Cap Rate vs. Cash-on-Cash Return:
+- Cap Rate ignores financing; it assumes all-cash purchase
+- Cash-on-Cash measures return on actual cash invested (after mortgage payments)
+
+----------------------------
+5. PROPERTY TYPES
+----------------------------
+A. Residential:
+- Single Family Residence (SFR): Standalone home on its own lot
+- Condominium (Condo): Individual unit in a multi-unit building; owner holds title to unit only
+- Townhouse: Multi-floor unit sharing walls with neighbors; owner holds title to structure and land
+- Multi-Family: Duplex (2 units), Triplex (3), Quadplex (4); owner can live in one unit and rent others
+- Cooperative (Co-op): Residents own shares in a corporation that owns the building
+
+B. Commercial:
+- Retail: Strip malls, storefronts, shopping centers
+- Office: Class A (premium), Class B (average), Class C (older/functional)
+- Industrial: Warehouses, manufacturing plants, distribution centers
+- Mixed-Use: Combination of residential and commercial in one building
+
+C. Special Purpose:
+- Hotels, hospitals, schools, churches — valued using the cost or income approach
+
+----------------------------
+6. LEGAL DISCLOSURES IN LISTINGS
+----------------------------
+Sellers are legally required to disclose known material defects that could affect property value or the buyer's decision.
+
+Common required disclosures:
+- Structural defects: Foundation cracks, roof damage, water intrusion
+- Hazardous materials: Lead paint (pre-1978 homes), asbestos, mold, radon
+- Pest infestations: Termites, rodents
+- Environmental hazards: Flood zone (FEMA), earthquake zone, fire zone
+- Legal issues: Liens, easements, encroachments, HOA violations
+- Death on property: Required in some states (varies by jurisdiction)
+- Natural disaster history: Flooding, fire, storm damage
+
+Seller's Disclosure Form:
+A standardized document completed by the seller answering yes/no questions about known defects. Buyers should independently verify all disclosures through inspections.
+
+Failure to disclose can result in rescission of contract, civil lawsuits, and license revocation for the agent.
+
+----------------------------
+7. DAYS ON MARKET (DOM)
+----------------------------
+Days on Market (DOM) measures how long a property has been listed for sale.
+
+- Short DOM (under 14 days): High demand, seller's market, likely multiple offers
+- Average DOM (30–60 days): Balanced market, normal negotiation
+- Long DOM (90+ days): Low demand, overpriced, or property issues; buyer has leverage
+
+Cumulative Days on Market (CDOM):
+Counts total days including relisted periods. Agents sometimes relist a property to reset DOM — buyers should look at CDOM.
+
+DOM impact on pricing strategy:
+- As DOM increases, price reductions become more likely
+- Properties with high DOM often sell 3–8% below list price
+- Fresh listings (low DOM) often sell at or above list price
+
+----------------------------
+8. COMPARATIVE MARKET ANALYSIS (CMA)
+----------------------------
+A CMA is a report prepared by a real estate agent to estimate a property's market value based on recently sold comparable properties.
+
+Steps in a CMA:
+1. Select 3–5 comparable properties (comps) sold within 6 months
+2. Comps should be within 1 mile (urban) or 5 miles (rural) of subject property
+3. Similar in size (within 10–20% of GLA)
+4. Similar age, style, condition
+5. Make dollar adjustments for differences
+
+Common adjustments:
+- Bedroom/bathroom differences: +/- $5,000–$15,000 per room
+- Garage: +/- $10,000–$20,000
+- Pool: +/- $10,000–$30,000
+- Lot size: +/- varies by market
+
+CMA vs. Appraisal:
+- CMA is prepared by a real estate agent; not legally a valuation
+- Appraisal is prepared by a licensed appraiser; used for mortgage lending
+- CMA is free; appraisal costs $300–$600
+
+----------------------------
+9. EARNEST MONEY & CONTINGENCIES
+----------------------------
+Earnest Money:
+A good-faith deposit made by the buyer when submitting an offer. Typically 1–3% of purchase price. Held in escrow until closing.
+
+- If deal closes: Applied to down payment or closing costs
+- If buyer backs out without contingency: Seller may keep earnest money
+- If seller backs out: Buyer typically gets earnest money back
+
+Common Contingencies:
+A. Inspection Contingency: Buyer has right to inspect property; can negotiate repairs or cancel
+B. Financing Contingency: Buyer must secure mortgage approval; can cancel if financing falls through
+C. Appraisal Contingency: Property must appraise at or above purchase price
+D. Sale Contingency: Buyer must sell their current home first (weakens offer in competitive markets)
+
+----------------------------
+10. CLOSING COSTS
+----------------------------
+Closing costs are fees paid at the settlement of a real estate transaction.
+
+Buyer's closing costs (2–5% of purchase price):
+- Loan origination fee: 0.5–1% of loan
+- Appraisal fee: $300–$600
+- Title insurance (lender's policy): $500–$1,500
+- Title search: $200–$400
+- Attorney fees (in attorney states): $500–$1,500
+- Prepaid interest, insurance, property taxes
+- Recording fees
+
+Seller's closing costs (6–10% of sale price):
+- Real estate commission: 5–6% of sale price (split between buyer/seller agents)
+- Title insurance (owner's policy): $1,000–$2,500
+- Transfer taxes: Varies by state
+- Outstanding liens or HOA fees
+- Attorney fees
+
+Closing Disclosure (CD):
+A federally required document provided 3 business days before closing that itemizes all closing costs.
+
+==================================================
+END OF KNOWLEDGE BASE
+==================================================
