@@ -1,9 +1,7 @@
 """
 app.py
 ------
-Streamlit UI for the Real Estate Tutor Bot.
-Orchestrates VectorDB → QuizGenerator → TutorChat into a
-clean, interactive assessment experience.
+Streamlit UI for PropTrain AI — MCQ-based Real Estate Tutor Bot.
 """
 
 import os
@@ -15,9 +13,6 @@ from tutor_chat import TutorChat
 
 load_dotenv()
 
-# ──────────────────────────────────────────
-# PAGE CONFIG
-# ──────────────────────────────────────────
 st.set_page_config(
     page_title="PropTrain AI — Real Estate Tutor",
     page_icon="🏠",
@@ -25,9 +20,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ──────────────────────────────────────────
-# CUSTOM CSS
-# ──────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap');
@@ -39,23 +31,14 @@ html, body, [class*="css"] {
 }
 h1, h2, h3 { font-family: 'Playfair Display', serif; }
 
-.verdict-correct  { background:#0f2e1a; border:1px solid #2d6a3f; border-radius:6px; padding:16px 20px; }
-.verdict-partial  { background:#2e2310; border:1px solid #7a5c20; border-radius:6px; padding:16px 20px; }
-.verdict-incorrect{ background:#2e0f0f; border:1px solid #6a2d2d; border-radius:6px; padding:16px 20px; }
-
-.score-big { font-size:3rem; font-family:'Playfair Display',serif; font-style:italic; }
-.score-correct   { color:#4ade80; }
-.score-partial   { color:#fbbf24; }
-.score-incorrect { color:#f87171; }
-
 .question-box {
     background: rgba(180,140,80,0.06);
-    border: 1px solid rgba(180,140,80,0.25);
-    border-radius: 6px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
-    font-size: 1.1rem;
-    line-height: 1.7;
+    border: 1px solid rgba(180,140,80,0.3);
+    border-radius: 8px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    font-size: 1.15rem;
+    line-height: 1.75;
 }
 .hint-box {
     background: rgba(255,255,255,0.03);
@@ -63,43 +46,104 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; }
     padding: 10px 16px;
     font-style: italic;
     color: #aaa;
-    margin-top: 12px;
+    margin-top: 8px;
+    border-radius: 0 6px 6px 0;
+}
+.option-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    margin: 8px 0;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(180,140,80,0.25);
+    border-radius: 8px;
+    color: #e8e0d0;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.option-correct {
+    background: rgba(74,222,128,0.12) !important;
+    border: 2px solid #4ade80 !important;
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin: 8px 0;
+    color: #4ade80;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.option-wrong {
+    background: rgba(248,113,113,0.12) !important;
+    border: 2px solid #f87171 !important;
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin: 8px 0;
+    color: #f87171;
+    font-size: 1rem;
+}
+.option-neutral {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin: 8px 0;
+    color: #888;
+    font-size: 1rem;
+}
+.result-correct {
+    background: rgba(74,222,128,0.08);
+    border: 1px solid rgba(74,222,128,0.3);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
+}
+.result-incorrect {
+    background: rgba(248,113,113,0.08);
+    border: 1px solid rgba(248,113,113,0.3);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
 }
 .explanation-box {
     background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius:6px;
-    padding: 18px 22px;
-    margin-top:12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 12px 0;
 }
-.pro-tip {
-    border-top: 1px solid rgba(180,140,80,0.2);
-    margin-top: 14px;
-    padding-top: 14px;
-    color: #b48c50;
-    font-style: italic;
+.example-box {
+    background: rgba(180,140,80,0.08);
+    border-left: 4px solid #b48c50;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 12px 0;
 }
-.correct-answer-box {
-    background: rgba(74,222,128,0.05);
-    border: 1px solid rgba(74,222,128,0.2);
-    border-radius: 6px;
-    padding: 14px 18px;
-    margin-top: 12px;
+.tip-box {
+    background: rgba(96,165,250,0.08);
+    border: 1px solid rgba(96,165,250,0.2);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin: 12px 0;
+    color: #93c5fd;
 }
 .stat-card {
     background: rgba(180,140,80,0.07);
     border: 1px solid rgba(180,140,80,0.2);
-    border-radius:6px;
+    border-radius: 8px;
     padding: 14px;
-    text-align:center;
+    text-align: center;
+}
+.score-display {
+    font-size: 2.5rem;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
 }
 </style>
 """, unsafe_allow_html=True)
 
 
-# ──────────────────────────────────────────
-# CACHED RESOURCE INIT (runs once)
-# ──────────────────────────────────────────
+# ── Init pipeline (cached) ──
 @st.cache_resource(show_spinner="Building knowledge base...")
 def init_pipeline():
     base_dir = os.path.dirname(__file__)
@@ -109,25 +153,22 @@ def init_pipeline():
     tutor = TutorChat(db)
     return db, generator, tutor
 
-
 db, generator, tutor = init_pipeline()
 
 
-# ──────────────────────────────────────────
-# SESSION STATE INIT
-# ──────────────────────────────────────────
+# ── Session state ──
 def init_state():
     defaults = {
-        "screen"        : "home",      # home | quiz
-        "question"      : None,        # current question dict
-        "evaluation"    : None,        # current evaluation dict
-        "user_answer"   : "",
-        "answered"      : False,
-        "show_hint"     : False,
-        "session_scores": [],          # list of ints
-        "history"       : [],          # list of result dicts
-        "difficulty"    : "intermediate",
-        "topic"         : None,
+        "screen"         : "home",
+        "question"       : None,
+        "evaluation"     : None,
+        "selected_option": None,
+        "answered"       : False,
+        "show_hint"      : False,
+        "correct_count"  : 0,
+        "total_count"    : 0,
+        "history"        : [],
+        "topic"          : None,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -136,125 +177,99 @@ def init_state():
 init_state()
 
 
-# ──────────────────────────────────────────
-# HELPERS
-# ──────────────────────────────────────────
-def avg_score():
-    s = st.session_state.session_scores
-    return round(sum(s) / len(s)) if s else 0
+# ── Helpers ──
+def accuracy():
+    if st.session_state.total_count == 0:
+        return 0
+    return round((st.session_state.correct_count / st.session_state.total_count) * 100)
 
-def verdict_class(v):
-    return {"correct":"verdict-correct","partial":"verdict-partial","incorrect":"verdict-incorrect"}.get(v,"")
+def load_question(topic):
+    with st.spinner("Generating question..."):
+        q = generator.generate_question(topic, difficulty="beginner")
+    st.session_state.question       = q
+    st.session_state.evaluation     = None
+    st.session_state.answered       = False
+    st.session_state.selected_option= None
+    st.session_state.show_hint      = False
 
-def score_class(v):
-    return {"correct":"score-correct","partial":"score-partial","incorrect":"score-incorrect"}.get(v,"")
-
-def verdict_icon(v):
-    return {"correct":"✓","partial":"◑","incorrect":"✗"}.get(v,"?")
-
-def load_question(topic, difficulty):
-    with st.spinner("Retrieving context & generating question..."):
-        q = generator.generate_question(topic, difficulty)
-    st.session_state.question   = q
-    st.session_state.evaluation = None
-    st.session_state.answered   = False
-    st.session_state.show_hint  = False
-    st.session_state.user_answer= ""
-
-def submit_answer():
+def submit_answer(selected):
     q = st.session_state.question
-    answer = st.session_state.user_answer.strip()
-    if not answer:
-        st.warning("Please type an answer before submitting.")
-        return
-    with st.spinner("AI is evaluating your answer..."):
+    st.session_state.selected_option = selected
+    with st.spinner("Checking your answer..."):
         ev = tutor.evaluate_answer(
-            question      = q["question"],
-            user_answer   = answer,
-            correct_answer= q["correct_answer"],
-            key_points    = q["key_points"],
-            topic         = q["topic"],
+            question       = q["question"],
+            options        = q["options"],
+            selected_option= selected,
+            correct_option = q["correct_option"],
+            topic          = q["topic"],
         )
     st.session_state.evaluation = ev
     st.session_state.answered   = True
-    st.session_state.session_scores.append(ev["score"])
+    st.session_state.total_count += 1
+    if ev["verdict"] == "correct":
+        st.session_state.correct_count += 1
     st.session_state.history.append({
         "topic"  : q["topic"],
-        "score"  : ev["score"],
         "verdict": ev["verdict"],
     })
 
 
-# ──────────────────────────────────────────
-# SIDEBAR
-# ──────────────────────────────────────────
+# ── SIDEBAR ──
 with st.sidebar:
     st.markdown("## 🏠 PropTrain AI")
     st.markdown("*Real Estate Mastery Bot*")
     st.divider()
 
-    st.markdown("### Difficulty")
-    st.session_state.difficulty = st.radio(
-        "Select Difficulty", ["beginner", "intermediate", "advanced"],
-        index=["beginner","intermediate","advanced"].index(st.session_state.difficulty),
-        label_visibility="collapsed"
-    )
-
-    st.divider()
     st.markdown("### Topic")
     selected_topic = st.selectbox("Select Topic", TOPICS, label_visibility="collapsed")
 
     if st.button("▶  Start Quiz", use_container_width=True, type="primary"):
         st.session_state.topic  = selected_topic
         st.session_state.screen = "quiz"
-        load_question(selected_topic, st.session_state.difficulty)
+        load_question(selected_topic)
 
     st.divider()
 
-    # Session stats
-    if st.session_state.session_scores:
+    if st.session_state.total_count > 0:
         st.markdown("### Session Stats")
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(f"""<div class='stat-card'>
-                <div style='font-size:1.6rem;color:#b48c50;font-style:italic'>{avg_score()}</div>
-                <div style='font-size:0.7rem;color:#666;text-transform:uppercase;letter-spacing:.1em'>Avg Score</div>
+                <div style='font-size:1.6rem;color:#b48c50;font-style:italic'>{accuracy()}%</div>
+                <div style='font-size:0.7rem;color:#666;text-transform:uppercase;letter-spacing:.1em'>Accuracy</div>
             </div>""", unsafe_allow_html=True)
         with col2:
             st.markdown(f"""<div class='stat-card'>
-                <div style='font-size:1.6rem;color:#b48c50;font-style:italic'>{len(st.session_state.session_scores)}</div>
-                <div style='font-size:0.7rem;color:#666;text-transform:uppercase;letter-spacing:.1em'>Questions</div>
+                <div style='font-size:1.6rem;color:#b48c50;font-style:italic'>{st.session_state.correct_count}/{st.session_state.total_count}</div>
+                <div style='font-size:0.7rem;color:#666;text-transform:uppercase;letter-spacing:.1em'>Score</div>
             </div>""", unsafe_allow_html=True)
 
         st.markdown("#### Recent")
-        for h in reversed(st.session_state.history[-5:]):
-            icon  = verdict_icon(h["verdict"])
-            color = {"correct":"#4ade80","partial":"#fbbf24","incorrect":"#f87171"}.get(h["verdict"],"#888")
+        for h in reversed(st.session_state.history[-6:]):
+            icon  = "✓" if h["verdict"] == "correct" else "✗"
+            color = "#4ade80" if h["verdict"] == "correct" else "#f87171"
             st.markdown(
                 f"<div style='font-size:0.8rem;color:{color};padding:3px 0'>"
-                f"{icon} {h['topic'][:22]}... — {h['score']}pts</div>",
+                f"{icon} {h['topic'][:28]}...</div>",
                 unsafe_allow_html=True
             )
 
 
-# ──────────────────────────────────────────
-# HOME SCREEN
-# ──────────────────────────────────────────
+# ── HOME ──
 if st.session_state.screen == "home":
     st.markdown("# PropTrain AI")
-    st.markdown("### *Master Property Listings with AI*")
+    st.markdown("### *Learn Real Estate, One Question at a Time*")
     st.markdown("""
-    An intelligent assessment platform that evaluates your real estate knowledge,
-    pinpoints gaps, and explains concepts with industry-grade depth.
+    A beginner-friendly real estate quiz bot that:
 
-    **How it works:**
-    1. 📚 Select a **topic** and **difficulty** from the sidebar
-    2. 🤖 Claude generates a question grounded in the knowledge base (RAG)
-    3. ✍️ Type your answer — the AI evaluates it intelligently
-    4. 💡 Get a deep explanation + pro insider tip
+    - 🎯 Asks you **multiple choice questions** on real estate topics
+    - 🤖 Uses **AI** to explain answers in simple, everyday language
+    - 💡 Gives **real-world examples** so concepts actually stick
+    - 📈 Tracks your **accuracy** as you improve
+
+    *No prior knowledge needed — perfect for complete beginners!*
     """)
     st.divider()
-
     c1, c2, c3 = st.columns(3)
     with c1:
         st.markdown("""<div class='stat-card'>
@@ -263,21 +278,18 @@ if st.session_state.screen == "home":
         </div>""", unsafe_allow_html=True)
     with c2:
         st.markdown("""<div class='stat-card'>
-            <div style='font-size:1.4rem;color:#b48c50'>RAG</div>
-            <div style='font-size:0.7rem;color:#666;text-transform:uppercase'>Grounded AI</div>
+            <div style='font-size:1.4rem;color:#b48c50'>MCQ</div>
+            <div style='font-size:0.7rem;color:#666;text-transform:uppercase'>Format</div>
         </div>""", unsafe_allow_html=True)
     with c3:
         st.markdown("""<div class='stat-card'>
-            <div style='font-size:1.4rem;color:#b48c50'>0–100</div>
-            <div style='font-size:0.7rem;color:#666;text-transform:uppercase'>Smart Scoring</div>
+            <div style='font-size:1.4rem;color:#b48c50'>Free</div>
+            <div style='font-size:0.7rem;color:#666;text-transform:uppercase'>Always</div>
         </div>""", unsafe_allow_html=True)
+    st.markdown("\n*← Pick a topic and click **Start Quiz** to begin!*")
 
-    st.markdown("\n*← Select a topic and click **Start Quiz** to begin*")
 
-
-# ──────────────────────────────────────────
-# QUIZ SCREEN
-# ──────────────────────────────────────────
+# ── QUIZ ──
 elif st.session_state.screen == "quiz":
     q  = st.session_state.question
     ev = st.session_state.evaluation
@@ -286,91 +298,128 @@ elif st.session_state.screen == "quiz":
         st.info("Loading question...")
         st.stop()
 
-    # Topic + difficulty badge
+    # Topic badge
     st.markdown(
-        f"<div style='font-size:0.75rem;color:#b48c50;letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px'>"
-        f"{q['topic']}  ·  {q['difficulty'].capitalize()}</div>",
+        f"<div style='font-size:0.75rem;color:#b48c50;letter-spacing:.15em;"
+        f"text-transform:uppercase;margin-bottom:8px'>"
+        f"🏠 {q['topic']}  ·  Beginner</div>",
         unsafe_allow_html=True
     )
-    st.markdown(f"### Question")
 
     # Question card
-    st.markdown(f"<div class='question-box'>{q['question']}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='question-box'>❓ {q['question']}</div>", unsafe_allow_html=True)
 
     # Hint toggle
     if not st.session_state.answered:
-        if st.button("💡 Show Hint"):
+        if st.button("💡 Need a hint?"):
             st.session_state.show_hint = not st.session_state.show_hint
         if st.session_state.show_hint:
-            st.markdown(f"<div class='hint-box'>{q['hint']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='hint-box'>{q.get('hint','')}</div>", unsafe_allow_html=True)
 
-    st.divider()
+    st.markdown("**Choose your answer:**")
 
-    # ── Answer input ──
+    # ── Options ──
     if not st.session_state.answered:
-        st.markdown("**Your Answer**")
-        answer = st.text_area(
-            "Your Answer", height=130, placeholder="Type your answer here...",
-            key="answer_input", label_visibility="collapsed"
-        )
-        st.session_state.user_answer = answer
+        cols = st.columns(2)
+        options = q.get("options", {})
+        option_keys = ["A", "B", "C", "D"]
+        for i, key in enumerate(option_keys):
+            with cols[i % 2]:
+                label = f"{key}.  {options.get(key, '')}"
+                if st.button(label, key=f"opt_{key}", use_container_width=True):
+                    submit_answer(key)
+                    st.rerun()
+    else:
+        # Show styled options after answering
+        options = q.get("options", {})
+        correct = ev.get("correct_option", q.get("correct_option", ""))
+        selected = st.session_state.selected_option
 
-        if st.button("Submit Answer →", type="primary", use_container_width=True):
-            submit_answer()
-            st.rerun()
+        for key in ["A", "B", "C", "D"]:
+            text = options.get(key, "")
+            if key == correct and key == selected:
+                st.markdown(f"<div class='option-correct'>✅ {key}.  {text}  ← Your Answer (Correct!)</div>", unsafe_allow_html=True)
+            elif key == correct:
+                st.markdown(f"<div class='option-correct'>✅ {key}.  {text}  ← Correct Answer</div>", unsafe_allow_html=True)
+            elif key == selected:
+                st.markdown(f"<div class='option-wrong'>❌ {key}.  {text}  ← Your Answer</div>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<div class='option-neutral'>{key}.  {text}</div>", unsafe_allow_html=True)
 
     # ── Evaluation result ──
     if st.session_state.answered and ev:
-        v = ev["verdict"]
-        vc = verdict_class(v)
-        sc = score_class(v)
-        vi = verdict_icon(v)
+        st.markdown("")
 
-        # Score banner
-        st.markdown(f"""
-        <div class='{vc}' style='display:flex;align-items:center;justify-content:space-between'>
-            <div>
-                <div style='font-size:0.75rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px'>
-                    {vi} &nbsp; {v.upper()}
+        if ev["verdict"] == "correct":
+            # ── CORRECT ──
+            st.markdown(f"""
+            <div class='result-correct'>
+                <div style='font-size:0.75rem;letter-spacing:.2em;color:#4ade80;text-transform:uppercase;margin-bottom:8px'>
+                    ✓ &nbsp; CORRECT!
                 </div>
-                <div style='font-size:1rem;color:#ccc'>{ev['short_feedback']}</div>
+                <div style='font-size:1rem;color:#ccc'>{ev.get('short_feedback','Great job!')}</div>
             </div>
-            <div class='score-big {sc}'>{ev['score']}<span style='font-size:1rem;color:#555'>/100</span></div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
-        # Explanation
-        st.markdown(f"""
-        <div class='explanation-box'>
-            <div style='font-size:0.7rem;color:#b48c50;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px'>
-                Deep Explanation
+            st.markdown(f"""
+            <div class='explanation-box'>
+                <div style='font-size:0.7rem;color:#b48c50;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px'>
+                    Why this is correct
+                </div>
+                <div style='font-size:0.95rem;line-height:1.75;color:#ccc'>{ev.get('explanation','')}</div>
             </div>
-            <div style='font-size:0.95rem;line-height:1.75;color:#ccc'>{ev['explanation']}</div>
-            <div class='pro-tip'>
-                ★ <strong>Pro Tip:</strong> {ev['pro_tip']}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
-        # Model answer
-        st.markdown(f"""
-        <div class='correct-answer-box'>
-            <div style='font-size:0.7rem;color:#4ade80;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px'>
-                Model Answer
+        else:
+            # ── INCORRECT ──
+            st.markdown(f"""
+            <div class='result-incorrect'>
+                <div style='font-size:0.75rem;letter-spacing:.2em;color:#f87171;text-transform:uppercase;margin-bottom:8px'>
+                    ✗ &nbsp; NOT QUITE — Let's Learn This Together!
+                </div>
+                <div style='font-size:1rem;color:#ccc'>{ev.get('short_feedback','No worries, let me explain!')}</div>
             </div>
-            <div style='font-size:0.9rem;color:#ccc;line-height:1.6'>{ev['correct_answer']}</div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+
+            # Detailed explanation
+            st.markdown(f"""
+            <div class='explanation-box'>
+                <div style='font-size:0.7rem;color:#b48c50;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px'>
+                    📖 Here's What You Need to Know
+                </div>
+                <div style='font-size:0.95rem;line-height:1.8;color:#ccc'>{ev.get('explanation','')}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Real world example
+            if ev.get("real_world_example"):
+                st.markdown(f"""
+                <div class='example-box'>
+                    <div style='font-size:0.7rem;color:#b48c50;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px'>
+                        🌍 Real-World Example
+                    </div>
+                    <div style='font-size:0.95rem;line-height:1.8;color:#ddd'>{ev.get('real_world_example','')}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # Memory tip (shown for both correct and incorrect)
+        if ev.get("remember_tip"):
+            st.markdown(f"""
+            <div class='tip-box'>
+                <span style='color:#b48c50;font-weight:bold'>🧠 Remember: </span>
+                <span style='color:#ccc'>{ev.get('remember_tip','')}</span>
+            </div>
+            """, unsafe_allow_html=True)
 
         st.markdown("")
 
         # Action buttons
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("Next Question →", type="primary", use_container_width=True):
-                load_question(st.session_state.topic, st.session_state.difficulty)
+            if st.button("➡️  Next Question", type="primary", use_container_width=True):
+                load_question(st.session_state.topic)
                 st.rerun()
         with col2:
-            if st.button("Change Topic", use_container_width=True):
+            if st.button("🔀  Change Topic", use_container_width=True):
                 st.session_state.screen = "home"
                 st.rerun()

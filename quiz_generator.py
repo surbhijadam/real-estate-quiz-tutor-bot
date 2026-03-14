@@ -1,8 +1,7 @@
 """
 quiz_generator.py
 -----------------
-Uses RAG (VectorDB) + Google Gemini to generate contextually
-grounded quiz questions from the real estate knowledge base.
+Generates MCQ questions with 4 options using Google Gemini + RAG.
 """
 
 import json
@@ -28,35 +27,23 @@ TOPICS = [
     "Closing Costs",
 ]
 
-DIFFICULTY_GUIDE = {
-    "beginner"    : "simple definitional question, single concept, no calculations",
-    "intermediate": "applied question requiring understanding of how concepts work together",
-    "advanced"    : "scenario-based question, may require calculation or multi-step reasoning",
-}
-
 
 def safe_parse_json(raw: str) -> dict:
-    """Robustly extract and parse JSON from Gemini response."""
     cleaned = raw.strip()
     cleaned = re.sub(r"```json\s*", "", cleaned)
     cleaned = re.sub(r"```\s*", "", cleaned)
     cleaned = cleaned.strip()
-
-    # Step 1 — direct parse
     try:
         return json.loads(cleaned)
     except json.JSONDecodeError:
         pass
-
-    # Step 2 — extract JSON block via regex
     match = re.search(r'\{.*\}', cleaned, re.DOTALL)
     if match:
         try:
             return json.loads(match.group())
         except json.JSONDecodeError:
             pass
-
-    raise ValueError(f"Could not parse JSON from Gemini response:\n{raw[:300]}")
+    raise ValueError(f"Could not parse JSON:\n{raw[:300]}")
 
 
 class QuizGenerator:
@@ -64,33 +51,41 @@ class QuizGenerator:
         self.db = vector_db
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-    def generate_question(self, topic: str, difficulty: str = "intermediate") -> dict:
-        """Generate a fresh question every time."""
+    def generate_question(self, topic: str, difficulty: str = "beginner") -> dict:
+        """Generate a fresh MCQ question with 4 options every time."""
         context = self.db.get_context(query=topic, top_k=3)
-        difficulty_note = DIFFICULTY_GUIDE.get(difficulty, DIFFICULTY_GUIDE["intermediate"])
 
-        prompt = f"""You are a real estate quiz question generator.
+        prompt = f"""You are a friendly real estate quiz creator making beginner-friendly MCQ questions.
 
-CONTEXT:
+KNOWLEDGE BASE CONTEXT:
 {context}
 
-Generate a {difficulty} quiz question about "{topic}".
-Difficulty: {difficulty_note}
+TOPIC: "{topic}"
 
-STRICT LENGTH RULES:
-- "question": max 20 words
-- "hint": max 15 words
-- "correct_answer": max 40 words
-- "key_points": exactly 3 items, max 5 words each
+Create a simple multiple choice question about this topic that anyone can understand.
 
-CRITICAL: Return ONLY this JSON, nothing else:
+STRICT RULES:
+- Question: max 20 words, simple English
+- 4 options labeled A, B, C, D
+- Each option: max 10 words
+- Only ONE correct answer
+- Wrong options should be plausible but clearly wrong
+- correct_option must be exactly "A", "B", "C", or "D"
+- hint: max 12 words
+
+RETURN ONLY THIS JSON:
 {{
-  "question": "short question here",
+  "question": "short simple question here?",
+  "options": {{
+    "A": "first option text",
+    "B": "second option text",
+    "C": "third option text",
+    "D": "fourth option text"
+  }},
+  "correct_option": "A",
   "hint": "short hint here",
-  "correct_answer": "concise answer here",
-  "key_points": ["point 1", "point 2", "point 3"],
   "topic": "{topic}",
-  "difficulty": "{difficulty}"
+  "difficulty": "beginner"
 }}"""
 
         response = self.client.models.generate_content(
@@ -101,5 +96,4 @@ CRITICAL: Return ONLY this JSON, nothing else:
                 max_output_tokens=2048,
             )
         )
-
         return safe_parse_json(response.text)
