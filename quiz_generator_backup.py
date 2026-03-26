@@ -8,7 +8,10 @@ Includes caching and rate limiting to handle quota constraints.
 
 import json
 import os
-import google.generativeai as genai
+try:
+    import google.generativeai as genai  # type: ignore[import]
+except ImportError:
+    genai = None
 from dotenv import load_dotenv
 from google.api_core.exceptions import ResourceExhausted
 from vector_db import VectorDB
@@ -46,6 +49,10 @@ DIFFICULTY_GUIDE = {
 class QuizGenerator:
     def __init__(self, vector_db: VectorDB):
         self.db = vector_db
+        if genai is None:
+            raise RuntimeError(
+                "google-generativeai package is not installed; install it with `pip install google-generativeai`"
+            )
         self.model = genai.GenerativeModel(
             model_name="gemini-2.5-flash",
             generation_config=genai.GenerationConfig(
